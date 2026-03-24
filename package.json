@@ -1,0 +1,24 @@
+{
+  "name": "consumir-api-clima-tempo",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Vilander/consumir-api-clima-tempo#readme",
+  "bugs": {
+    "url": "https://github.com/Vilander/consumir-api-clima-tempo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vilander/consumir-api-clima-tempo.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "type": "module",
+  "main": "clima-tempo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "openmeteo": "^1.2.3"
+  }
+}
