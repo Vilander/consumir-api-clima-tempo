@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clima Americana-SP</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #f4f7f6;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+      }
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        max-width: 450px;
+        width: 100%;
+      }
+      h2 {
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 5px;
+        margin-top: 20px;
+        font-size: 1.2em;
+      }
+      .info {
+        margin: 8px 0;
+      }
+      .previsao-item {
+        background: #fff;
+        border: 1px solid #ddd;
+        padding: 12px;
+        margin-top: 10px;
+        border-radius: 8px;
+      }
+      .data-destaque {
+        color: #007bff;
+        font-weight: bold;
+      }
+      .loading {
+        text-align: center;
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2 style="margin-top: 0">🌡️ Clima Atual em Americana/SP</h2>
+      <div id="clima-atual" class="loading">Carregando dados...</div>
+
+      <h2>☀️ Radiação Solar (Agora)</h2>
+      <div id="radiacao-solar"></div>
+
+      <h2>📅 Previsão Diária</h2>
+      <div id="previsao-diaria"></div>
+    </div>
+
+    <script>
+      // Função corrigida para não errar o dia
+      function formatarDataBR(dataISO) {
+        const [ano, mes, dia] = dataISO.split("-");
+        return `${dia}/${mes}/${ano}`;
+      }
+
+      async function obterClima() {
+        const url =
+          "https://api.open-meteo.com/v1/forecast?latitude=-22.7388&longitude=-47.3319&daily=temperature_2m_max,uv_index_max,rain_sum,apparent_temperature_max&hourly=shortwave_radiation,apparent_temperature&models=best_match&current=temperature_2m,relative_humidity_2m,is_day,rain,apparent_temperature&timezone=America%2FSao_Paulo";
+
+        try {
+          const resposta = await fetch(url);
+          const dados = await resposta.json();
+
+          // 1. Atual
+          const atual = dados.current;
+          document.getElementById("clima-atual").innerHTML = `
+                <div class="info"><strong>Temperatura:</strong> ${atual.temperature_2m}°C</div>
+                <div class="info"><strong>Sensação:</strong> ${atual.apparent_temperature}°C</div>
+                <div class="info"><strong>Chuva:</strong> ${atual.rain}mm</div>
+                <div class="info"><strong>Umidade:</strong> ${atual.relative_humidity_2m}%</div>
+                <div class="info"><strong>Período:</strong> ${atual.is_day ? "☀️ Dia" : "🌙 Noite"}</div>
+            `;
+
+          // 2. Radiação Solar
+          const radDiv = document.getElementById("radiacao-solar");
+          if (atual.is_day) {
+            const rad = dados.hourly.shortwave_radiation[0];
+            radDiv.innerHTML = `<div class="info">Intensidade: ${rad} W/m²</div>`;
+          } else {
+            radDiv.innerHTML = `<div class="info">Indisponível durante a noite.</div>`;
+          }
+
+          // 3. Previsão Diária (Corrigindo o dia)
+          const prevDiv = document.getElementById("previsao-diaria");
+          prevDiv.innerHTML = "";
+
+          dados.daily.time.forEach((data, i) => {
+            prevDiv.innerHTML += `
+                    <div class="previsao-item">
+                        <div class="data-destaque">${formatarDataBR(data)}</div>
+                        <div class="info">🌡️ Máx: ${dados.daily.temperature_2m_max[i]}°C</div>
+                        <div class="info">🌧️ Chuva: ${dados.daily.rain_sum[i]} mm</div>
+                        <div class="info">☀️ UV Máx: ${dados.daily.uv_index_max[i]}</div>
+                    </div>
+                `;
+          });
+        } catch (erro) {
+          document.getElementById("clima-atual").innerText =
+            "Erro ao carregar dados.";
+        }
+      }
+
+      obterClima();
+    </script>
+  </body>
+</html>

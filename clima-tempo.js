@@ -7,7 +7,7 @@ function formatarDataBR(dataISO) {
 
 async function obterClima() {
   const url =
-    "https://api.open-meteo.com/v1/forecast?latitude=-22.7392&longitude=-47.3314&daily=rain_sum,uv_index_max&hourly=shortwave_radiation&models=best_match&current=rain,temperature_2m,relative_humidity_2m,is_day,apparent_temperature&timezone=America%2FSao_Paulo&past_days=1&forecast_days=3";
+    "https://api.open-meteo.com/v1/forecast?latitude=-22.7388&longitude=-47.3319&daily=temperature_2m_max,uv_index_max,rain_sum,apparent_temperature_max&hourly=shortwave_radiation,apparent_temperature&models=best_match&current=temperature_2m,relative_humidity_2m,is_day,rain,apparent_temperature&timezone=America%2FSao_Paulo";
 
   try {
     const resposta = await fetch(url);
@@ -18,7 +18,7 @@ async function obterClima() {
 
     const dados = await resposta.json();
 
-    console.log("\n=== CLIMA ATUAL ===");
+    console.log("\n=== CLIMA ATUAL EM AMERICANA/SP ===");
     console.log("Temperatura:", dados.current.temperature_2m, "°C");
     console.log("Chuva:", dados.current.rain, "mm");
     console.log("Umidade:", dados.current.relative_humidity_2m, "%");
